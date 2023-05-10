@@ -1,5 +1,6 @@
 import pgPromise from "pg-promise";
 import { validate } from "./validate-cpf";
+import Checkout from "./Checkout";
 
 const input: {
   cpf: string;
@@ -50,65 +51,13 @@ process.stdin.on("data", async (data) => {
   }
 
   if (command.startsWith("checkout")) {
-    const connection = pgPromise()(
-      "postgres://postgres:postgres@localhost:5432/app"
-    );
-
+    const checkout = new Checkout();
     try {
-      const { cpf, items, coupon, from, to } = input;
-
-      if (!validate(cpf)) {
-        console.log("CPF inválido");
-        return;
-      }
-
-      const output = {
-        subtotal: 0,
-        freight: 0,
-        total: 0,
-      };
-
-      for (const item of items) {
-        if (item.quantity <= 0) throw new Error("Invalid quantity");
-        if (items.filter((i: any) => i.idProduct === item.idProduct).length > 1)
-          throw new Error("Duplicated item");
-        const [productData] = await connection.query(
-          `select * from cccat11.product where id_product = ${item.idProduct}`
-        );
-        const price = parseFloat(productData.price);
-        output.subtotal += price * item.quantity;
-
-        if (from && to) {
-          const { width, height, length, weight } = productData;
-          if (width <= 0 || height <= 0 || length <= 0)
-            throw new Error("Invalid dimensions");
-          if (weight <= 0) throw new Error("Invalid weight");
-          const volume = ((((width / 100) * height) / 100) * length) / 100;
-          const density = parseFloat(weight) / volume;
-          let freight = volume * 1000 * (density / 100);
-          freight = Math.max(10, freight);
-          output.freight += freight * item.quantity;
-        }
-      }
-      output.total = output.subtotal;
-      if (coupon) {
-        const [couponData] = await connection.query(
-          `select * from cccat11.coupon where code = '${coupon}'`
-        );
-        const today = new Date();
-        if (couponData && couponData.expire_date.getTime() >= today.getTime()) {
-          output.total -=
-            (output.total * parseFloat(couponData.percentage)) / 100;
-        }
-      }
-      output.total += output.freight;
-      console.log("Compra realizada com sucesso!", output);
-    } catch (error: any) {
-      console.log("Erro ao realizar compra!", error.message);
+      const output = await checkout.execute(input);
+      console.log(output);
       return;
-    } finally {
-      await connection.$pool.end();
-      process.exit(0);
+    } catch (error: any) {
+      console.log(error.message);
     }
   }
   console.log("Comando inválido");

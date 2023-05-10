@@ -1,4 +1,4 @@
-import { validate } from "./validate-cpf";
+import { validate } from "../src/validate-cpf";
 
 test.each([
   `198.295.120-61`,
