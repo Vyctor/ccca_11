@@ -1,8 +1,18 @@
+import crypto from "crypto";
 import Checkout from "../src/Checkout";
+import { GetOrder } from "../src/GetOrder";
+import { OrderRepositoryDatabase } from "../src/OrderRepositoryDatabase";
+import { OrderRepository } from "../src/OrderRepository";
+import ProductRepository from "../src/ProductRepository";
+import CouponRepository from "../src/CouponRepository";
 
 let checkout: Checkout;
+let getOrder: GetOrder;
+let orderRepository: OrderRepository;
+let productRepository: ProductRepository;
+let couponRepository: CouponRepository;
 
-beforeEach(() => {
+beforeEach(async () => {
   const products: any = {
     1: {
       idProduct: 1,
@@ -50,7 +60,6 @@ beforeEach(() => {
       weight: -3,
     },
   };
-
   const coupons: any = {
     VALE20: {
       percentage: 20,
@@ -61,19 +70,20 @@ beforeEach(() => {
       expire_date: new Date("2022-10-10T10:00:00"),
     },
   };
-
-  const productRepository = {
+  productRepository = {
     async get(idProduct: number): Promise<any> {
       return products[idProduct];
     },
   };
-  const couponRepository = {
+  couponRepository = {
     async get(code: string): Promise<any> {
       return coupons[code];
     },
   };
-
-  checkout = new Checkout(productRepository, couponRepository);
+  orderRepository = new OrderRepositoryDatabase();
+  await orderRepository.clear();
+  checkout = new Checkout(productRepository, couponRepository, orderRepository);
+  getOrder = new GetOrder(orderRepository);
 });
 
 test(`Não deve criar pedido com cpf inválido`, async () => {
@@ -230,4 +240,60 @@ test("Não deve fazer um pedido de produto com peso negativo", async () => {
   expect(async () => {
     await checkout.execute(input);
   }).rejects.toThrowError("Invalid weight");
+});
+
+test("Deve fazer um pedido com três itens e obter o pedido salvo", async () => {
+  const idOrder = crypto.randomUUID();
+  const input = {
+    idOrder,
+    cpf: `198.295.120-61`,
+    items: [
+      { idProduct: 1, quantity: 1 },
+      { idProduct: 2, quantity: 1 },
+      { idProduct: 3, quantity: 3 },
+    ],
+  };
+  await checkout.execute(input);
+  const output = await getOrder.execute(idOrder);
+  expect(output.total).toBe(6090);
+});
+
+test("Deve fazer um pedido com três itens e gerar o código do pedido", async () => {
+  await checkout.execute({
+    idOrder: crypto.randomUUID(),
+    cpf: `198.295.120-61`,
+    items: [
+      { idProduct: 1, quantity: 1 },
+      { idProduct: 2, quantity: 1 },
+      { idProduct: 3, quantity: 3 },
+    ],
+    email: "john.doe@gmail.com",
+    date: new Date("2022-01-01T10:00:00"),
+  });
+  await checkout.execute({
+    idOrder: crypto.randomUUID(),
+    cpf: `198.295.120-61`,
+    items: [
+      { idProduct: 1, quantity: 1 },
+      { idProduct: 2, quantity: 1 },
+      { idProduct: 3, quantity: 3 },
+    ],
+    email: "john.doe@gmail.com",
+    date: new Date("2022-01-01T10:00:00"),
+  });
+  const idOrder = crypto.randomUUID();
+  await checkout.execute({
+    idOrder,
+    cpf: `198.295.120-61`,
+    items: [
+      { idProduct: 1, quantity: 1 },
+      { idProduct: 2, quantity: 1 },
+      { idProduct: 3, quantity: 3 },
+    ],
+    email: "john.doe@gmail.com",
+    date: new Date("2022-01-01T10:00:00"),
+  });
+
+  const output = await getOrder.execute(idOrder);
+  expect(output.code).toBe("202200000003");
 });

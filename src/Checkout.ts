@@ -1,8 +1,12 @@
 import { validate } from "./validate-cpf";
 import ProductRepository from "./ProductRepository";
 import CouponRepository from "./CouponRepository";
+import { OrderRepository } from "./OrderRepository";
+import SimulateFreight from "./SimulateFreight";
+import ValidateCoupon from "./ValidateCoupon";
 
 type Input = {
+  idOrder?: string;
   cpf: string;
   items: Array<{
     idProduct: number;
@@ -11,6 +15,8 @@ type Input = {
   coupon?: string;
   from?: string;
   to?: string;
+  email?: string;
+  date?: Date;
 };
 
 type Output = {
@@ -26,14 +32,15 @@ export default class Checkout {
 
   constructor(
     private readonly _productRepository: ProductRepository,
-    private readonly _couponRepository: CouponRepository
+    private readonly _couponRepository: CouponRepository,
+    private readonly _orderRepository: OrderRepository
   ) {
     this._subtotal = 0;
     this._freight = 0;
     this._total = 0;
   }
   public async execute(input: Input): Promise<Output> {
-    const { cpf, items, coupon, from, to } = input;
+    const { cpf, items, coupon, from, to, idOrder, date } = input;
 
     if (!validate(cpf)) {
       throw new Error("Invalid cpf");
@@ -48,29 +55,44 @@ export default class Checkout {
       this._subtotal += price * item.quantity;
 
       if (from && to) {
-        const { width, height, length, weight } = productData;
-        if (width <= 0 || height <= 0 || length <= 0)
-          throw new Error("Invalid dimensions");
-        if (weight <= 0) throw new Error("Invalid weight");
-        const volume = ((((width / 100) * height) / 100) * length) / 100;
-        const density = parseFloat(weight) / volume;
-        let freight = volume * 1000 * (density / 100);
-        freight = Math.max(10, freight);
-        this._freight += freight * item.quantity;
+        const simulateFreight = new SimulateFreight(this._productRepository);
+        const { freight } = await simulateFreight.execute({
+          items,
+          from,
+          to,
+        });
+        this._freight = freight;
       }
     }
 
     this._total = this._subtotal;
+    const today = date ?? new Date();
 
     if (coupon) {
       const couponData = await this._couponRepository.get(coupon);
-      const today = new Date();
-      if (couponData && couponData.expire_date.getTime() >= today.getTime()) {
+      const validateCoupon = new ValidateCoupon(this._couponRepository);
+      const { isValid } = await validateCoupon.execute(coupon);
+      if (isValid) {
         this._total -= (this._total * parseFloat(couponData.percentage)) / 100;
       }
     }
-
     this._total += this._freight;
+    const sequence = await this._orderRepository.count();
+    const code = `${today.getFullYear()}${new String(sequence + 1).padStart(
+      8,
+      "0"
+    )}`;
+
+    const order = {
+      idOrder,
+      code,
+      cpf,
+      total: this._total,
+      freight: this._freight,
+      items,
+    };
+
+    await this._orderRepository.save(order);
 
     return {
       subtotal: this._subtotal,
