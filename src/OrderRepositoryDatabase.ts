@@ -1,8 +1,9 @@
 import pgPromise from "pg-promise";
 import { OrderRepository } from "./OrderRepository";
+import Order from "./Order";
 
 export class OrderRepositoryDatabase implements OrderRepository {
-  async get(idOrder: string): Promise<any> {
+  async get(idOrder: string): Promise<Order | undefined> {
     const connection = pgPromise()(
       "postgres://postgres:postgres@localhost:5432/app"
     );
@@ -10,10 +11,19 @@ export class OrderRepositoryDatabase implements OrderRepository {
       "select * from cccat11.order where id_order  = $1",
       [idOrder]
     );
+
+    if (!orderData) {
+      return undefined;
+    }
+
+    const { id_order, code, cpf, total, freight } = orderData;
+
+    const order = new Order(id_order, cpf, new Date(), 0);
     await connection.$pool.end();
     return orderData;
   }
-  async save(order: any): Promise<void> {
+
+  async save(order: Order): Promise<void> {
     const connection = pgPromise()(
       "postgres://postgres:postgres@localhost:5432/app"
     );

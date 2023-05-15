@@ -1,3 +1,4 @@
+import FreightCalculator from "./FreightCalculator";
 import ProductRepository from "./ProductRepository";
 
 export default class SimulateFreight {
@@ -6,27 +7,13 @@ export default class SimulateFreight {
     const output = {
       freight: 0,
     };
-
     for (const item of input.items) {
-      const productData = await this._productRepository.get(item.idProduct);
-
-      const { width, height, length, weight } = productData;
-
-      if (width <= 0 || height <= 0 || length <= 0) {
-        throw new Error("Invalid dimensions");
+      if (input.from && input.to) {
+        const product = await this._productRepository.get(item.idProduct);
+        const freight = FreightCalculator.calculate(product);
+        output.freight += freight * item.quantity;
       }
-
-      if (weight <= 0) {
-        throw new Error("Invalid weight");
-      }
-
-      const volume = ((((width / 100) * height) / 100) * length) / 100;
-      const density = parseFloat(weight) / volume;
-      let freight = volume * 1000 * (density / 100);
-      freight = Math.max(10, freight);
-      output.freight += freight * item.quantity;
     }
-
     return output;
   }
 }
