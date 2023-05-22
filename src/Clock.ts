@@ -1,3 +1,3 @@
 export default interface Clock {
-  getDate(): Date;
+	getDate(): Date;
 }

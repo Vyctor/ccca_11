@@ -1,21 +1,20 @@
-import pgPromise from "pg-promise";
-import CouponRepository from "./CouponRepository";
+import pgp from "pg-promise";
 import Coupon from "./Coupon";
+import CouponRepository from "./CouponRepository";
 
 export default class CouponRepositoryDatabase implements CouponRepository {
-  async get(code: string): Promise<Coupon | undefined> {
-    const connection = pgPromise()(
-      "postgres://postgres:postgres@localhost:5432/app"
-    );
+  async get(code: string) {
+    const connection = pgp()("postgres://postgres:postgres@localhost:5432/app");
     const [couponData] = await connection.query(
-      `select * from cccat11.coupon where code = '${code}'`
+      "select * from cccat11.coupon where code = $1",
+      [code]
     );
     await connection.$pool.end();
-    const { code: codeCoupon, percentage, expiration_date } = couponData;
-    if (!codeCoupon) {
-      return undefined;
-    }
-    const coupon = new Coupon(codeCoupon, percentage, expiration_date);
-    return coupon;
+    if (!couponData) return undefined;
+    return new Coupon(
+      couponData.code,
+      parseFloat(couponData.percentage),
+      couponData.expire_date
+    );
   }
 }

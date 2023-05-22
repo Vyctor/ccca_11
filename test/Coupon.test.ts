@@ -1,32 +1,16 @@
 import Coupon from "../src/Coupon";
 
-describe("Coupon unit test", () => {
-  it("Deve testar se o cupom de desconto é valido", () => {
-    const coupon = new Coupon("VALE20", 20, new Date("2023-10-10T00:00:00"));
-    const today = new Date("2021-10-10T00:00:00");
-    expect(coupon.code).toBe("VALE20");
-    expect(coupon.percentage).toBe(20);
-    expect(coupon.expirationDate).toEqual(new Date("2023-10-10T00:00:00"));
-    expect(coupon.isValid(today)).toBe(true);
-  });
-  it("Deve testar se o cupom de desconto é invalido", () => {
-    const coupon = new Coupon("VALE20", 20, new Date("2023-10-10T00:00:00"));
+test("Deve testar se o cupom é válido", function () {
+	const coupon = new Coupon("VALE20", 20, new Date("2023-10-01T10:00:00"));
+	expect(coupon.isValid(new Date("2023-03-01T10:00:00"))).toBe(true);
+});
 
-    const today = new Date("2024-10-10T00:00:00");
+test("Deve calcular o desconto", function () {
+	const coupon = new Coupon("VALE20", 20, new Date("2023-10-01T10:00:00"));
+	expect(coupon.calculateDiscount(1000)).toBe(200);
+});
 
-    expect(coupon.code).toBe("VALE20");
-    expect(coupon.percentage).toBe(20);
-    expect(coupon.expirationDate).toEqual(new Date("2023-10-10T00:00:00"));
-    expect(coupon.isValid(today)).toBe(false);
-  });
-
-  it("Deve calcular o disconto", () => {
-    const coupon = new Coupon("VALE20", 20, new Date("2023-10-10T00:00:00"));
-    const today = new Date("2021-10-10T00:00:00");
-    expect(coupon.code).toBe("VALE20");
-    expect(coupon.percentage).toBe(20);
-    expect(coupon.expirationDate).toEqual(new Date("2023-10-10T00:00:00"));
-    expect(coupon.isValid(today)).toBe(true);
-    expect(coupon.calculateDiscount(1000)).toBe(200);
-  });
+test("Deve testar se o cupom é inválido", function () {
+	const coupon = new Coupon("VALE20", 20, new Date("2023-03-01T10:00:00"));
+	expect(coupon.isValid(new Date("2023-04-01T10:00:00"))).toBe(false);
 });
