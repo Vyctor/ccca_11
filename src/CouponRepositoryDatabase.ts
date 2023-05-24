@@ -1,15 +1,16 @@
 import pgp from "pg-promise";
 import Coupon from "./Coupon";
 import CouponRepository from "./CouponRepository";
+import DatabaseConnection from "./DatabaseConnection";
 
 export default class CouponRepositoryDatabase implements CouponRepository {
+  constructor(private readonly connection: DatabaseConnection) {}
+
   async get(code: string) {
-    const connection = pgp()("postgres://postgres:postgres@localhost:5432/app");
-    const [couponData] = await connection.query(
+    const [couponData] = await this.connection.query(
       "select * from cccat11.coupon where code = $1",
       [code]
     );
-    await connection.$pool.end();
     if (!couponData) return undefined;
     return new Coupon(
       couponData.code,

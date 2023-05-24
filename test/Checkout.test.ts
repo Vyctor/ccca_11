@@ -8,6 +8,8 @@ import Product from "../src/Product";
 import GetOrder from "../src/GetOrder";
 import DatabaseRepositoryFactory from "../src/DatabaseRepositoryFactory";
 import RepositoryFactory from "../src/RepositoryFactory";
+import PgPromiseAdapter from "../src/PgPromiseAdapter";
+import DatabaseConnection from "../src/DatabaseConnection";
 
 axios.defaults.validateStatus = function () {
   return true;
@@ -16,9 +18,11 @@ axios.defaults.validateStatus = function () {
 let checkout: Checkout;
 let getOrder: GetOrder;
 let repositoryFactory: RepositoryFactory;
+let connection: DatabaseConnection;
 
-beforeEach(() => {
-  repositoryFactory = new DatabaseRepositoryFactory();
+beforeEach(async () => {
+  connection = new PgPromiseAdapter();
+  repositoryFactory = new DatabaseRepositoryFactory(connection);
   checkout = new Checkout(repositoryFactory);
   getOrder = new GetOrder(repositoryFactory);
 });
@@ -28,9 +32,9 @@ test("Não deve criar pedido com cpf inválido", async function () {
     cpf: "406.302.170-27",
     items: [],
   };
-  expect(() => checkout.execute(input)).rejects.toThrow(
-    new Error("Invalid cpf")
-  );
+  await expect(async () => {
+    await checkout.execute(input);
+  }).rejects.toThrow(new Error("Invalid cpf"));
 });
 
 test("Deve fazer um pedido com 3 itens", async function () {
@@ -94,9 +98,9 @@ test("Não deve fazer um pedido com quantidade negativa de item", async function
     cpf: "407.302.170-27",
     items: [{ idProduct: 1, quantity: -1 }],
   };
-  expect(() => checkout.execute(input)).rejects.toThrow(
-    new Error("Invalid quantity")
-  );
+  await expect(async () => {
+    await checkout.execute(input);
+  }).rejects.toThrow(new Error("Invalid quantity"));
 });
 
 test("Não deve fazer um pedido com item duplicado", async function () {
@@ -107,9 +111,9 @@ test("Não deve fazer um pedido com item duplicado", async function () {
       { idProduct: 1, quantity: 1 },
     ],
   };
-  expect(() => checkout.execute(input)).rejects.toThrow(
-    new Error("Duplicated item")
-  );
+  await expect(async () => {
+    await checkout.execute(input);
+  }).rejects.toThrow(new Error("Duplicated item"));
 });
 
 test("Deve fazer um pedido com 3 itens calculando o frete", async function () {
@@ -237,4 +241,8 @@ test("Deve fazer um pedido com 3 itens e gerar o código do pedido", async funct
   await checkout.execute(input);
   const output = await getOrder.execute(idOrder);
   expect(output.code).toBe("202200000003");
+});
+
+afterEach(async () => {
+  await connection.close();
 });

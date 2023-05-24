@@ -1,15 +1,16 @@
 import pgp from "pg-promise";
 import ProductRepository from "./ProductRepository";
 import Product from "./Product";
+import DatabaseConnection from "./DatabaseConnection";
 
 export default class ProductRepositoryDatabase implements ProductRepository {
+  constructor(private readonly connection: DatabaseConnection) {}
+
   async get(idProduct: number) {
-    const connection = pgp()("postgres://postgres:postgres@localhost:5432/app");
-    const [productData] = await connection.query(
+    const [productData] = await this.connection.query(
       "select * from cccat11.product where id_product = $1",
       [idProduct]
     );
-    await connection.$pool.end();
     return new Product(
       productData.id_product,
       productData.description,

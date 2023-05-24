@@ -1,11 +1,20 @@
+import DatabaseConnection from "../src/DatabaseConnection";
 import DatabaseRepositoryFactory from "../src/DatabaseRepositoryFactory";
+import PgPromiseAdapter from "../src/PgPromiseAdapter";
 import ValidateCoupon from "../src/ValidateCoupon";
 
 let validateCoupon: ValidateCoupon;
 
-beforeEach(() => {
-  const repositoryFactory = new DatabaseRepositoryFactory();
+let connection: DatabaseConnection;
+
+beforeEach(async () => {
+  connection = new PgPromiseAdapter();
+  const repositoryFactory = new DatabaseRepositoryFactory(connection);
   validateCoupon = new ValidateCoupon(repositoryFactory);
+});
+
+afterEach(async () => {
+  await connection.close();
 });
 
 test("Deve validar o cupom de desconto válido", async function () {
