@@ -1,15 +1,13 @@
 import axios from "axios";
 import sinon from "sinon";
 import Checkout from "../src/Checkout";
-import CouponRepository from "../src/CouponRepository";
 import CouponRepositoryDatabase from "../src/CouponRepositoryDatabase";
-import ProductRepository from "../src/ProductRepository";
 import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
 import crypto from "crypto";
-import OrderRepositoryDatabase from "../src/OrderRepositoryDatabase";
 import Product from "../src/Product";
-import Coupon from "../src/Coupon";
 import GetOrder from "../src/GetOrder";
+import DatabaseRepositoryFactory from "../src/DatabaseRepositoryFactory";
+import RepositoryFactory from "../src/RepositoryFactory";
 
 axios.defaults.validateStatus = function () {
   return true;
@@ -17,33 +15,12 @@ axios.defaults.validateStatus = function () {
 
 let checkout: Checkout;
 let getOrder: GetOrder;
-let productRepository: ProductRepository;
-let couponRepository: CouponRepository;
-let orderRepository: OrderRepositoryDatabase;
+let repositoryFactory: RepositoryFactory;
 
 beforeEach(() => {
-  const products: any = {
-    1: new Product(1, "A", 1000, 100, 30, 10, 3),
-    2: new Product(2, "B", 5000, 50, 50, 50, 22),
-    3: new Product(3, "C", 30, 10, 10, 10, 0.9),
-  };
-  productRepository = {
-    async get(idProduct: number): Promise<any> {
-      return products[idProduct];
-    },
-  };
-  const coupons: any = {
-    VALE20: new Coupon("VALE20", 20, new Date("2023-10-01T10:00:00")),
-    VALE10: new Coupon("VALE10", 10, new Date("2022-10-01T10:00:00")),
-  };
-  couponRepository = {
-    async get(code: string): Promise<any> {
-      return coupons[code];
-    },
-  };
-  orderRepository = new OrderRepositoryDatabase();
-  checkout = new Checkout(productRepository, couponRepository, orderRepository);
-  getOrder = new GetOrder(orderRepository);
+  repositoryFactory = new DatabaseRepositoryFactory();
+  checkout = new Checkout(repositoryFactory);
+  getOrder = new GetOrder(repositoryFactory);
 });
 
 test("Não deve criar pedido com cpf inválido", async function () {
@@ -170,7 +147,6 @@ test("Deve fazer um pedido com 1 item com stub", async function () {
   const productRepositoryStub = sinon
     .stub(ProductRepositoryDatabase.prototype, "get")
     .resolves(new Product(1, "A", 100, 10, 10, 10, 10));
-  checkout = new Checkout();
   const input = {
     cpf: "407.302.170-27",
     items: [{ idProduct: 1, quantity: 1 }],
@@ -190,7 +166,6 @@ test("Deve verificar se o email foi enviado usando um mock", async function () {
     CouponRepositoryDatabase.prototype,
     "get"
   );
-  checkout = new Checkout();
   const input = {
     cpf: "407.302.170-27",
     items: [{ idProduct: 1, quantity: 1 }],
@@ -223,8 +198,8 @@ test("Deve fazer um pedido com 3 itens e obter o pedido salvo", async function (
 });
 
 test("Deve fazer um pedido com 3 itens e gerar o código do pedido", async function () {
-  await orderRepository.clear();
-  checkout = new Checkout(productRepository, couponRepository, orderRepository);
+  const orderRepository = repositoryFactory.createOrderRepository();
+  orderRepository.clear();
   await checkout.execute({
     idOrder: crypto.randomUUID(),
     cpf: "407.302.170-27",

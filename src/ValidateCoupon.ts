@@ -1,22 +1,25 @@
 import CouponRepository from "./CouponRepository";
+import RepositoryFactory from "./RepositoryFactory";
 
 export default class ValidateCoupon {
+  private readonly couponRepository: CouponRepository;
 
-	constructor (readonly couponRepository: CouponRepository) {
-	}
+  constructor(repositoryFactory: RepositoryFactory) {
+    this.couponRepository = repositoryFactory.createCouponRepository();
+  }
 
-	async execute (code: string): Promise<Output> {
-		const output = {
-			isValid: false
-		};
-		const coupon = await this.couponRepository.get(code);
-		if (!coupon) return output;
-		const today = new Date();
-		output.isValid = coupon.isValid(today);
-		return output;
-	}	
+  async execute(code: string): Promise<Output> {
+    const output = {
+      isValid: false,
+    };
+    const coupon = await this.couponRepository.get(code);
+    if (!coupon) return output;
+    const today = new Date();
+    output.isValid = coupon.isValid(today);
+    return output;
+  }
 }
 
 type Output = {
-	isValid: boolean
-}
+  isValid: boolean;
+};
