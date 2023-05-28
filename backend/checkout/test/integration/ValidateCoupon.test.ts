@@ -1,7 +1,7 @@
-import DatabaseConnection from "../src/infra/database/DatabaseConnection";
-import DatabaseRepositoryFactory from "../src/infra/factory/DatabaseRepositoryFactory";
-import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
-import ValidateCoupon from "../src/application/usecase/ValidateCoupon";
+import DatabaseConnection from "../../src/infra/database/DatabaseConnection";
+import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositoryFactory";
+import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
+import ValidateCoupon from "../../src/application/usecase/ValidateCoupon";
 
 let validateCoupon: ValidateCoupon;
 

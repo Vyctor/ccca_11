@@ -1,7 +1,7 @@
-import DatabaseConnection from "../src/infra/database/DatabaseConnection";
-import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
-import ProductRepository from "../src/application/repository/ProductRepository";
-import ProductRepositoryDatabase from "../src/infra/repository/ProductRepositoryDatabase";
+import DatabaseConnection from "../../src/infra/database/DatabaseConnection";
+import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
+import ProductRepository from "../../src/application/repository/ProductRepository";
+import ProductRepositoryDatabase from "../../src/infra/repository/ProductRepositoryDatabase";
 
 let productRepository: ProductRepository;
 let connection: DatabaseConnection;

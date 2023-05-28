@@ -1,4 +1,4 @@
-import Cpf from "../src/domain/entity/Cpf";
+import Cpf from "../../src/domain/entity/Cpf";
 
 test.each(["407.302.170-27", "684.053.160-00", "746971314ß01"])(
   "Deve criar um cpf válido %s",

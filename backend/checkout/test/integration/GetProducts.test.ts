@@ -1,7 +1,7 @@
-import DatabaseRepositoryFactory from "../src/infra/factory/DatabaseRepositoryFactory";
-import GetProducts from "../src/application/usecase/GetProducts";
-import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
-import UsecaseFactory from "../src/infra/factory/UsecaseFactory";
+import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositoryFactory";
+import GetProducts from "../../src/application/usecase/GetProducts";
+import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
+import UsecaseFactory from "../../src/infra/factory/UsecaseFactory";
 
 let connection: PgPromiseAdapter;
 let repositoryFactory: DatabaseRepositoryFactory;

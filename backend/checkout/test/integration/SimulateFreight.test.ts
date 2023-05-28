@@ -1,7 +1,7 @@
-import DatabaseConnection from "../src/infra/database/DatabaseConnection";
-import DatabaseRepositoryFactory from "../src/infra/factory/DatabaseRepositoryFactory";
-import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
-import SimulateFreight from "../src/application/usecase/SimulateFreight";
+import DatabaseConnection from "../../src/infra/database/DatabaseConnection";
+import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositoryFactory";
+import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
+import SimulateFreight from "../../src/application/usecase/SimulateFreight";
 
 let connection: DatabaseConnection;
 let simulateFreight: SimulateFreight;

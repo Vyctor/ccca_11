@@ -1,15 +1,15 @@
 import axios from "axios";
 import sinon from "sinon";
-import Checkout from "../src/application/usecase/Checkout";
-import CouponRepositoryDatabase from "../src/infra/repository/CouponRepositoryDatabase";
-import ProductRepositoryDatabase from "../src/infra/repository/ProductRepositoryDatabase";
+import Checkout from "../../src/application/usecase/Checkout";
+import CouponRepositoryDatabase from "../../src/infra/repository/CouponRepositoryDatabase";
+import ProductRepositoryDatabase from "../../src/infra/repository/ProductRepositoryDatabase";
 import crypto from "crypto";
-import Product from "../src/domain/entity/Product";
-import GetOrder from "../src/application/usecase/GetOrder";
-import DatabaseRepositoryFactory from "../src/infra/factory/DatabaseRepositoryFactory";
-import RepositoryFactory from "../src/application/factory/RepositoryFactory";
-import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
-import DatabaseConnection from "../src/infra/database/DatabaseConnection";
+import Product from "../../src/domain/entity/Product";
+import GetOrder from "../../src/application/usecase/GetOrder";
+import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositoryFactory";
+import RepositoryFactory from "../../src/application/factory/RepositoryFactory";
+import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
+import DatabaseConnection from "../../src/infra/database/DatabaseConnection";
 
 axios.defaults.validateStatus = function () {
   return true;
