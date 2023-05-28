@@ -1,10 +1,27 @@
-import pgp from "pg-promise";
 import ProductRepository from "./ProductRepository";
 import Product from "./Product";
 import DatabaseConnection from "./DatabaseConnection";
 
 export default class ProductRepositoryDatabase implements ProductRepository {
   constructor(private readonly connection: DatabaseConnection) {}
+  async list(): Promise<Product[]> {
+    const productsData = await this.connection.query(
+      "select * from cccat11.product",
+      []
+    );
+    const products = productsData.map((product: any) => {
+      return new Product(
+        product.id_product,
+        product.description,
+        parseFloat(product.price),
+        product.width,
+        product.height,
+        product.length,
+        parseFloat(product.weight)
+      );
+    });
+    return products;
+  }
 
   async get(idProduct: number) {
     const [productData] = await this.connection.query(

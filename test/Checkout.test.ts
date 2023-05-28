@@ -27,6 +27,10 @@ beforeEach(async () => {
   getOrder = new GetOrder(repositoryFactory);
 });
 
+afterEach(async () => {
+  await connection.close();
+});
+
 test("Não deve criar pedido com cpf inválido", async function () {
   const input = {
     cpf: "406.302.170-27",
@@ -241,8 +245,4 @@ test("Deve fazer um pedido com 3 itens e gerar o código do pedido", async funct
   await checkout.execute(input);
   const output = await getOrder.execute(idOrder);
   expect(output.code).toBe("202200000003");
-});
-
-afterEach(async () => {
-  await connection.close();
 });

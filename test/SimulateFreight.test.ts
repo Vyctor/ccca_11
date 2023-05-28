@@ -11,6 +11,10 @@ beforeEach(async () => {
   simulateFreight = new SimulateFreight(repositoryFactory);
 });
 
+afterEach(async () => {
+  await connection.close();
+});
+
 test("Deve simular o frete", async function () {
   const input = {
     items: [
