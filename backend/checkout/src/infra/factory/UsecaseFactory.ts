@@ -11,17 +11,14 @@ export default class UsecaseFactory {
   }
   createGetProducts(type: string): GetProducts {
     let getProducts;
-    if (type === "application/json") {
+    if (type === "text/csv") {
+      getProducts = new GetProducts(this.repositoryFactory, new CsvPresenter());
+    } else {
       getProducts = new GetProducts(
         this.repositoryFactory,
         new JsonPresenter()
       );
     }
-    if (type === "text/csv") {
-      getProducts = new GetProducts(this.repositoryFactory, new CsvPresenter());
-    }
-    if (!getProducts) throw new Error("Invalid content-type");
-
     return getProducts;
   }
 }
