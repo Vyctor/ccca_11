@@ -2,7 +2,6 @@ import axios from "axios";
 import sinon from "sinon";
 import Checkout from "../../src/application/usecase/Checkout";
 import CouponRepositoryDatabase from "../../src/infra/repository/CouponRepositoryDatabase";
-import ProductRepositoryDatabase from "../../src/infra/repository/ProductRepositoryDatabase";
 import crypto from "crypto";
 import Product from "../../src/domain/entity/Product";
 import GetOrder from "../../src/application/usecase/GetOrder";
@@ -10,6 +9,10 @@ import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositor
 import RepositoryFactory from "../../src/application/factory/RepositoryFactory";
 import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
 import DatabaseConnection from "../../src/infra/database/DatabaseConnection";
+import GatewayHttpFactory from "../../src/infra/factory/GatewayHttpFactory";
+import AxiosAdapter from "../../src/infra/http/AxiosAdapter";
+import CatalogHttpGateway from "../../src/infra/gateway/CatalogHttpGateway";
+import FreightHttpGateway from "../../src/infra/gateway/FreightHttpGateway";
 
 axios.defaults.validateStatus = function () {
   return true;
@@ -23,7 +26,10 @@ let connection: DatabaseConnection;
 beforeEach(async () => {
   connection = new PgPromiseAdapter();
   repositoryFactory = new DatabaseRepositoryFactory(connection);
-  checkout = new Checkout(repositoryFactory);
+  const httpClient = new AxiosAdapter();
+  const gatewayFactory = new GatewayHttpFactory(httpClient);
+  const freightGateway = new FreightHttpGateway(httpClient);
+  checkout = new Checkout(repositoryFactory, gatewayFactory, freightGateway);
   getOrder = new GetOrder(repositoryFactory);
 });
 
@@ -153,7 +159,7 @@ test("Deve fazer um pedido com 3 itens calculando o frete com preço mínimo", a
 
 test("Deve fazer um pedido com 1 item com stub", async function () {
   const productRepositoryStub = sinon
-    .stub(ProductRepositoryDatabase.prototype, "get")
+    .stub(CatalogHttpGateway.prototype, "getProduct")
     .resolves(new Product(1, "A", 100, 10, 10, 10, 10));
   const input = {
     cpf: "407.302.170-27",
@@ -165,9 +171,9 @@ test("Deve fazer um pedido com 1 item com stub", async function () {
 });
 
 test("Deve verificar se o email foi enviado usando um mock", async function () {
-  const productRepositoryMock = sinon.mock(ProductRepositoryDatabase.prototype);
+  const productRepositoryMock = sinon.mock(CatalogHttpGateway.prototype);
   productRepositoryMock
-    .expects("get")
+    .expects("getProduct")
     .once()
     .resolves(new Product(1, "A", 100, 1, 1, 1, 1));
   const couponRepositorySpy = sinon.spy(

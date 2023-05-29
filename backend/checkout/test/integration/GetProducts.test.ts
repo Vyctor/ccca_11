@@ -1,24 +1,21 @@
 import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositoryFactory";
-import GetProducts from "../../src/application/usecase/GetProducts";
 import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
-import UsecaseFactory from "../../src/infra/factory/UsecaseFactory";
+import ProductRepository from "../../src/application/repository/ProductRepository";
 
 let connection: PgPromiseAdapter;
 let repositoryFactory: DatabaseRepositoryFactory;
-let getProducts: GetProducts;
+let getProducts: ProductRepository;
 
 beforeEach(() => {
   connection = new PgPromiseAdapter();
   repositoryFactory = new DatabaseRepositoryFactory(connection);
-  getProducts = new UsecaseFactory(repositoryFactory).createGetProducts(
-    "application/json"
-  );
+  getProducts = repositoryFactory.createProductRepository();
 });
 afterEach(async () => {
   await connection.close();
 });
 
 test("Deve listar os produtos", async function () {
-  const output = await getProducts.execute();
+  const output = await getProducts.list();
   expect(output).toHaveLength(3);
 });
