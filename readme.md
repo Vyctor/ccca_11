@@ -92,10 +92,15 @@ O Aggregate é um relacionamento de objetos de domínio como entities e value ob
 [Slides - Test Patterns](./resources/aula03/test-patterns.pdf)
 
 [Live com Alistair Cockburn](https://www.youtube.com/watch?v=AOIWUPjal60&ab_channel=RodrigoBranas)
+
 [Ports and Adapters Pattern - Alistair Cockburn](https://web.archive.org/web/20060625193207/http://alistair.cockburn.us/crystal/articles/hpaaa/hexagonalportsandadaptersarchitecture.htm)
+
 [Ports and Adapters Pattern - Juan Garrido](https://jmgarridopaz.github.io/content/hexagonalarchitecture.html)
+
 [The Little Mocker](https://blog.cleancoder.com/uncle-bob/2014/05/14/TheLittleMocker.html)
+
 [Mocks Aren't Stubs](https://martinfowler.com/articles/mocksArentStubs.html)
+
 [Endo-Testing: Unit Testing with Mock Objects](./resources/aula03/MockObjectsFinal.PDF)
 
 ### Aula 04 - Clean Architecture Parte 1
@@ -111,6 +116,7 @@ O Aggregate é um relacionamento de objetos de domínio como entities e value ob
 ### Aula 06 - Domain-Driven Design
 
 [Slide - DDD1](./resources/aula06/slide-ddd-1.pdf)
+
 [Slide - DDD2](./resources/aula06/slide-ddd-2.pdf)
 
 [Specification Pattern - Erick Eveans](./resources/aula06/specification-pattern.pdf)
