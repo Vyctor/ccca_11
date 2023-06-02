@@ -55,3 +55,69 @@ Fornecem uma separação física para um conjunto de objetos de domínio, geralm
 O Aggregate é um relacionamento de objetos de domínio como entities e value objects, estabelecendo o relacionamento entre eles, tratado como uma unidade.
 
 **Se estiver difícil de implementar o repositório, talvez o aggregate seja muito grande e possa ser separado.**
+
+<hr/>
+
+## Materiais Sugeridos
+
+### Livros
+
+- Clean Code, Robert C. Martin
+- Clean Architecture, Robert C. Martin
+- Refactoring, Martin Fowler
+- Working Effectively with Legacy Code, Michael Feathers
+- Patterns of Enterprise Application Architecture, Martin Fowler
+- Implementing Domain-Driven Design, Vernon Vaughn
+- Design Patterns: Elements of Reusable Object-Oriented Software, Erich Gamma
+- Patterns, Principles, and Practices of Domain-Driven Design, Scott Millett
+- Extreme Programming Explained: Embrace Change, Kent Beck
+- Microservices Patterns: With Examples in Java, Chris Richardson
+- Xunit Test Patterns: Refactoring Test Code, Gerard Meszaros
+
+### Aula 01 - Clean Code e Clean Architecture
+
+[Slides](./resources/aula01/slide.pdf)
+
+### Aula 02 - Test-Driven Development
+
+[Slides](./resources/aula02/slide.pdf)
+
+[The Dynamic Factory Pattern](./resources/aula02/TheDynamicFactoryPattern.pdf)
+[Integration Test](https://martinfowler.com/bliki/IntegrationTest.html)
+[Unit Test](https://martinfowler.com/bliki/UnitTest.html)
+
+### Aula 03 - Ports and Adapters and Test Patterns (Stub, Spy, Mock e Fake)
+
+[Slides - Ports and Adapters](./resources/aula03/slide.pdf)
+[Slides - Test Patterns](./resources/aula03/test-patterns.pdf)
+
+[Live com Alistair Cockburn](https://www.youtube.com/watch?v=AOIWUPjal60&ab_channel=RodrigoBranas)
+[Ports and Adapters Pattern - Alistair Cockburn](https://web.archive.org/web/20060625193207/http://alistair.cockburn.us/crystal/articles/hpaaa/hexagonalportsandadaptersarchitecture.htm)
+[Ports and Adapters Pattern - Juan Garrido](https://jmgarridopaz.github.io/content/hexagonalarchitecture.html)
+[The Little Mocker](https://blog.cleancoder.com/uncle-bob/2014/05/14/TheLittleMocker.html)
+[Mocks Aren't Stubs](https://martinfowler.com/articles/mocksArentStubs.html)
+[Endo-Testing: Unit Testing with Mock Objects](./resources/aula03/MockObjectsFinal.PDF)
+
+### Aula 04 - Clean Architecture Parte 1
+
+[Slides - Clean Architecture](./resources/aula04/slide.pdf)
+
+[Clean Architecture - Robert Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+
+### Aula 05 - Clean Architecture Parte 2
+
+[Slides - Clean Architecture](./resources/aula05/slide.pdf)
+
+### Aula 06 - Domain-Driven Design
+
+[Slide - DDD1](./resources/aula06/slide-ddd-1.pdf)
+[Slide - DDD2](./resources/aula06/slide-ddd-2.pdf)
+
+[Specification Pattern - Erick Eveans](./resources/aula06/specification-pattern.pdf)
+[Specification Pattern - Fabrício Rissetto](http://www.fabriciorissetto.com/blog/specification-pattern/)
+
+### Aula 07
+
+[Slide - SOLID](./resources/aula07/slide.pdf)
+
+### Aula 08
