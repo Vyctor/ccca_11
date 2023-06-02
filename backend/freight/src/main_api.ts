@@ -4,7 +4,7 @@ import ExpressAdapter from "./infra/http/ExpressAdapter";
 import HttpController from "./infra/http/HttpController";
 
 const connection = new PgPromiseAdapter();
-const usecaseFactory = new UsecaseFactory();
+const usecaseFactory = new UsecaseFactory(connection);
 
 const httpServer = new ExpressAdapter();
 new HttpController(httpServer, usecaseFactory);

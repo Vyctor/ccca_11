@@ -150,11 +150,11 @@ test("Deve fazer um pedido com 3 itens calculando o frete com preço mínimo", a
       { idProduct: 3, quantity: 3 },
     ],
     from: "88015600",
-    to: "22030060",
+    to: "22060030",
   };
   const output = await checkout.execute(input);
-  expect(output.freight).toBe(280);
-  expect(output.total).toBe(6370);
+  expect(output.freight).toBe(217.05544450204079);
+  expect(output.total).toBe(6307.055444502041);
 });
 
 test("Deve fazer um pedido com 1 item com stub", async function () {
@@ -213,7 +213,7 @@ test("Deve fazer um pedido com 3 itens e obter o pedido salvo", async function (
 
 test("Deve fazer um pedido com 3 itens e gerar o código do pedido", async function () {
   const orderRepository = repositoryFactory.createOrderRepository();
-  orderRepository.clear();
+  await orderRepository.clear();
   await checkout.execute({
     idOrder: crypto.randomUUID(),
     cpf: "407.302.170-27",

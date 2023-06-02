@@ -17,23 +17,40 @@ export default class OrderRepositoryDatabase implements OrderRepository {
       orderData.date,
       orderData.sequence
     );
-    const [itemsData] = await this.connection.query(
-      "select * from cccat11.order_item where id_order = $1",
+    const itemsData = await this.connection.query(
+      "select * from cccat11.item where id_order = $1",
       [idOrder]
     );
-    itemsData.forEach((item: any) => {
-      order.items.push(
-        new Item(item.id_product, parseFloat(item.price), item.quantity)
+    for (const itemData of itemsData) {
+      const item = new Item(
+        itemData.id_product,
+        parseFloat(itemData.price),
+        itemData.quantity
       );
-    });
+      order.items.push(item);
+    }
     return order;
   }
 
   async save(order: Order): Promise<void> {
     await this.connection.query(
-      "insert into cccat11.order (id_order, code, cpf, total, freight) values ($1, $2, $3, $4, $5)",
-      [order.idOrder, order.code, order.cpf, order.getTotal(), order.freight]
+      "insert into cccat11.order (id_order, code, cpf, total, freight, date, sequence) values ($1, $2, $3, $4, $5, $6, $7)",
+      [
+        order.idOrder,
+        order.code,
+        order.cpf.value,
+        order.getTotal(),
+        order.freight,
+        order.date,
+        order.sequence,
+      ]
     );
+    for (const item of order.items) {
+      await this.connection.query(
+        "insert into cccat11.item (id_order, id_product, price, quantity) values ($1, $2, $3, $4)",
+        [order.idOrder, item.idProduct, item.price, item.quantity]
+      );
+    }
   }
 
   async clear(): Promise<void> {
