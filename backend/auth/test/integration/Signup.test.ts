@@ -1,3 +1,4 @@
+import UserRepository from "../../src/application/repository/UserRepository";
 import Login from "../../src/application/usecase/Login";
 import Signup from "../../src/application/usecase/Signup";
 import DatabaseConnection from "../../src/infra/database/DatabaseConnection";
@@ -6,16 +7,18 @@ import UserRepositoryDatabase from "../../src/infra/repository/UserRepositoryDat
 
 describe("Signup integration test", () => {
   let connection: DatabaseConnection;
+  let userRepository: UserRepository;
   beforeEach(async () => {
     connection = new PgPromiseAdapter();
+    userRepository = new UserRepositoryDatabase(connection);
   });
 
   afterEach(async () => {
+    await userRepository.delete("joao@gmail.com");
     await connection.close();
   });
 
   it("Deve fazer um signup", async () => {
-    const userRepository = new UserRepositoryDatabase(connection);
     const signup = new Signup(userRepository);
     const date = new Date("2022-03-01T00:00:00.000");
     const input = {

@@ -4,4 +4,5 @@ export default interface UserRepository {
   save(user: User): Promise<void>;
   get(email: string): Promise<User | undefined>;
   update(user: User): Promise<void>;
+  delete(email: string): Promise<void>;
 }
