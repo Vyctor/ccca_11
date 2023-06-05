@@ -1,0 +1,16 @@
+import UserRepository from "../repository/UserRepository";
+import User from "../../domain/entity/User";
+
+export default class Signup {
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async execute(input: Input): Promise<void> {
+    const user = User.create(input.email, input.password);
+    await this.userRepository.save(user);
+  }
+}
+
+type Input = {
+  email: string;
+  password: string;
+};
