@@ -122,6 +122,7 @@ O Aggregate é um relacionamento de objetos de domínio como entities e value ob
 ![Context Map Cheat Sheet](./resources/aula06/context_map_cheat_sheet.png)
 
 [Specification Pattern - Erick Eveans](./resources/aula06/specification-pattern.pdf)
+
 [Specification Pattern - Fabrício Rissetto](http://www.fabriciorissetto.com/blog/specification-pattern/)
 
 ### Aula 07
@@ -129,3 +130,9 @@ O Aggregate é um relacionamento de objetos de domínio como entities e value ob
 [Slide - SOLID](./resources/aula07/slide.pdf)
 
 ### Aula 08
+
+[Event-Driven Architecture](./resources/aula08/event-driven-architecture.pdf)
+
+[CQRS](./resources/aula08/cqrs.pdf)
+
+[Bibliografia](./resources/aula08/bibliografia.pdf)
