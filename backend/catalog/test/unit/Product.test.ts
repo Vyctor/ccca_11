@@ -1,3 +1,4 @@
+import DigitalProduct from "../../src/domain/entity/DigitalProduct";
 import Product from "../../src/domain/entity/Product";
 
 describe("Product unit tests", () => {
@@ -18,5 +19,13 @@ describe("Product unit tests", () => {
     expect(() => new Product(1, "A", 1000, 100, 100, 100, -10)).toThrow(
       new Error("Invalid weight")
     );
+  });
+
+  it("Deve criar um produto digital", () => {
+    const digitalProduct = new DigitalProduct(2, "B", 100);
+    expect(digitalProduct).toBeInstanceOf(DigitalProduct);
+    expect(digitalProduct.description).toBe("B");
+    expect(digitalProduct.price).toBe(100);
+    expect(digitalProduct.idProduct).toBe(2);
   });
 });
