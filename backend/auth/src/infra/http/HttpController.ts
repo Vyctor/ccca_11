@@ -6,15 +6,15 @@ export default class HttpController {
     private readonly httpServer: HttpServer,
     private readonly usecaseFactory: UsecaseFactory
   ) {
-    // this.httpServer.on(
-    //   "get",
-    //   "/products",
-    //   async (params: any, body: any, headers: any) => {
-    //     const contentType = headers["content-type"];
-    //     const getProducts = this.usecaseFactory.createGetProducts(contentType);
-    //     const output = await getProducts.execute();
-    //     return output;
-    //   }
-    // );
+    this.httpServer.on(
+      "post",
+      "/verify",
+      async (params: any, body: any, headers: any) => {
+        const { token } = body;
+        const verify = this.usecaseFactory.createVerify();
+        const output = await verify.execute(token);
+        return output;
+      }
+    );
   }
 }

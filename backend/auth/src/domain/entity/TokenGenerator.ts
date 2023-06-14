@@ -1,4 +1,4 @@
-import { sign } from "jsonwebtoken";
+import { JwtPayload, sign, verify } from "jsonwebtoken";
 import User from "./User";
 
 export default class TokenGenerator {
@@ -14,5 +14,9 @@ export default class TokenGenerator {
       this.SECRET,
       { expiresIn: this.EXPIRES_IN }
     );
+  }
+
+  verify<T>(token: string): any {
+    return verify(token, this.SECRET);
   }
 }
